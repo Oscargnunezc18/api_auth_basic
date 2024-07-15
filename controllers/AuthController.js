@@ -11,9 +11,10 @@ router.post('/login', AuthMiddleware.validateUserAndPass, async (req, res) => {
 });
 
 router.post('/register', async (req, res) => {
-    const response = await UserService.createUser(req);
+    const response = await UserService.createUser(req.body);
     res.status(response.code).json(response.message);
 });
+
 
 router.post('/logout', AuthMiddleware.validateToken, async (req, res) => {
     const response = await AuthService.logout(req.headers.token);

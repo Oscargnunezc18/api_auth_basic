@@ -19,17 +19,27 @@ const isValidUserById = async (req, res, next) => {
 const hasPermissions = async (req, res, next) => {
     const token = req.headers.token;
     const payload = JSON.parse(Buffer.from(token, 'base64').toString('ascii'));
+    if(payload.id !== +req.params.id){
+        return res.status(401).json({
+            message: 'must login first'
+        });
+    }
+    next();
+}
+
+const isAdmin = async (req, res, next) => {
+    const token = req.headers.token;
+    const payload = JSON.parse(Buffer.from(token, 'base64').toString('ascii'));
     if(!payload.roles.includes('admin')){
-        if(payload.id !== +req.params.id){
-            return res.status(401).json({
-                message: 'Unauthorized'
-            });
-        }
+        return res.status(401).json({
+            message: 'must be admin, first registered user will be the admin'
+        });
     }
     next();
 }
 
 export default {
     isValidUserById,
-    hasPermissions
+    hasPermissions,
+    isAdmin
 };

@@ -16,11 +16,16 @@ const login = async (email, password) => {
 
     const expiration = (new Date()).setHours((new Date()).getHours() + 1);
 
+    const rol = await db.Role.findOne({
+        where:{
+            id_user: response.id
+        }
+    });
     const token = Buffer.from(JSON.stringify({
         name: response.name,
         email: response.email,
         id: response.id,
-        roles: ['user'],
+        roles: rol.type,
         expiration: expiration,
     })).toString('base64');
 
@@ -31,7 +36,7 @@ const login = async (email, password) => {
     }
 
     await db.Session.create(session);
-
+    console.log(await db.Session.findAll());
     return {
         code: 200,
         message: token

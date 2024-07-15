@@ -6,13 +6,30 @@ import AuthMiddleware from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
-router.post('/create', async (req, res) => {
-    const response = await UserService.createUser(req);
-    res.status(response.code).json(response.message);
+
+router.get('/getAllUsers',
+    [
+        AuthMiddleware.validateToken,
+        UserMiddleware.isAdmin
+    ],
+    async (req, res) => {
+        const response = await UserService.getAllUsers();
+        res.status(response.code).json(response.data);
+
 });
 
-router.get(
-    '/:id',
+router.get('/findUsers',
+    [
+        AuthMiddleware.validateToken,
+        UserMiddleware.isAdmin
+    ],
+    async (req, res) => {
+        const response = await UserService.findUsers(req,res);
+        res.status(response.code).json(response.data);
+
+});
+
+router.get('/:id',
     [
         NumberMiddleware.isNumber,
         UserMiddleware.isValidUserById,
@@ -35,6 +52,11 @@ router.put('/:id', [
         res.status(response.code).json(response.message);
     });
 
+//router.delete('/deleteAll', async(req,res)=> {
+//        const response = await UserService.deleteAll();
+//        res.status(response.code).json(response.message);
+//    });
+
 router.delete('/:id',
     [
         NumberMiddleware.isNumber,
@@ -46,5 +68,16 @@ router.delete('/:id',
        const response = await UserService.deleteUser(req.params.id);
        res.status(response.code).json(response.message);
     });
+
+router.post('/bulkCreate',
+    [
+        AuthMiddleware.validateToken,
+        UserMiddleware.isAdmin
+    ],
+    async (req, res) => {
+        const response = await UserService.bulkCreate(req.body);
+        res.status(response.code).json(response.data);
+});
+
 
 export default router;

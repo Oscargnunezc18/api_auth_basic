@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.BOOLEAN
   }, {
     sequelize,
-    modelName: 'Rol',
+    modelName: 'Role',
   });
   return Role;
 };
